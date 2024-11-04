@@ -6,7 +6,7 @@ Website: https://ht79.info/
 Tags: cybozu, kintone, contact form 7, form, form data to kintone
 Requires at least: 6.3
 Tested up to: 6.5.4
-Stable tag: 2.27.6
+Stable tag: 2.27.7
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -39,7 +39,7 @@ Cover banner designed by [akari_doi](https://profiles.wordpress.org/akari_doi/)
 1. Upload the entire `kintone-form` folder to the `/ wp-content / plugins /` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
-A tab for setting the information on kitone appears on the "Contact Form 7" setting screen.
+A tab for setting the information on kintone appears on the "Contact Form 7" setting screen.
 
 == Frequently asked questions ==
 
@@ -49,6 +49,9 @@ A tab for setting the information on kitone appears on the "Contact Form 7" sett
 1. screenshot-1.png
 
 == Changelog ==
+
+2.27.7 (2024-11-04)
+* Fix typo.
 
 2.27.6 (2024-10-29)
 * Fixed an issue where radio buttons could be empty when using Conditional Fields for Contact Form 7
