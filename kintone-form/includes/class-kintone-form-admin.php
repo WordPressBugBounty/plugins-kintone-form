@@ -150,7 +150,7 @@ class Kintone_Form_Admin {
 			'RICH_TEXT',
 			'MULTI_LINE_TEXT',
 			'DROP_DOWN',
-			'ORGANIZATION_SELECT'
+			'ORGANIZATION_SELECT',
 		),
 		'time'       => array(
 			'SINGLE_LINE_TEXT',
@@ -181,7 +181,7 @@ class Kintone_Form_Admin {
 		'RICH_TEXT'           => 'textarea',
 		'MULTI_LINE_TEXT'     => 'textarea',
 		'ORGANIZATION_SELECT' => 'text',
-		'FILE' => 'file',
+		'FILE'                => 'file',
 	);
 
 
@@ -200,7 +200,6 @@ class Kintone_Form_Admin {
 			}
 		}
 
-		add_action( 'wpcf7_admin_init', array( $this, 'kintone_form_add_tag_generator_text' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ) );
 
 		add_action( 'wpcf7_save_contact_form', array( $this, 'wpcf7_save_contact_form' ), 10, 3 );
@@ -259,13 +258,13 @@ class Kintone_Form_Admin {
 		$kintone_setting_data = wp_parse_args(
 			$kintone_setting_data,
 			array(
-				'domain'                                           => '',
+				'domain'    => '',
 				'email_address_to_send_kintone_registration_error' => get_option( 'admin_email' ),
-				'app_datas'                                        => array(),
+				'app_datas' => array(),
 			)
 		);
 
-		$domain                                           = $kintone_setting_data['domain'];
+		$domain = $kintone_setting_data['domain'];
 		$email_address_to_send_kintone_registration_error = $kintone_setting_data['email_address_to_send_kintone_registration_error'];
 
 		$kintone_basic_authentication_id = '';
@@ -407,8 +406,7 @@ class Kintone_Form_Admin {
 												</tr>
 												<?php if ( isset( $app_data['formdata']['properties'] ) ) : ?>
 													<?php foreach ( $app_data['formdata']['properties'] as $form_data ) : ?>
-														<?php
-														if ( isset( $form_data['code'] ) ) : ?>
+														<?php if ( isset( $form_data['code'] ) ) : ?>
 															<tr>
 																<td>
 																	<?php if ( $this->is_update_key_kintone_field( $form_data ) ) : ?>
@@ -418,7 +416,7 @@ class Kintone_Form_Admin {
 																	<?php endif; ?>
 																</td>
 																<td style="padding: 5px 10px 5px 0px; border-bottom: 1px solid #e2e2e2;">
-																	<?php echo esc_html( ( isset( $form_data['label'] ) ) ? $form_data['label'] : "" ) . '(' . esc_html( $form_data['code'] ) . ')'; ?>
+																	<?php echo esc_html( ( isset( $form_data['label'] ) ) ? $form_data['label'] : '' ) . '(' . esc_html( $form_data['code'] ) . ')'; ?>
 																</td>
 																<td><-</td>
 																<?php
@@ -431,24 +429,24 @@ class Kintone_Form_Admin {
 																		<table>
 																			<?php foreach ( $form_data['fields'] as $subtables ) : ?>
 																				<tr>
-																					<td style="padding: 5px 10px; border-bottom: 1px solid #e2e2e2;"><?php echo esc_html( ( isset( $subtables['label'] ) ) ? $subtables['label'] : "" ) . '(' . esc_html( $subtables['code'] ) . ')'; ?></td>
+																					<td style="padding: 5px 10px; border-bottom: 1px solid #e2e2e2;"><?php echo esc_html( ( isset( $subtables['label'] ) ) ? $subtables['label'] : '' ) . '(' . esc_html( $subtables['code'] ) . ')'; ?></td>
 																					<td><-</td>
 																					<td style="padding: 5px 10px; border-bottom: 1px solid #e2e2e2;">
 
-																						<?php if ( array_key_exists( $subtables['type'], $this->kintone_fieldcode_supported_list ) ): ?>
+																						<?php if ( array_key_exists( $subtables['type'], $this->kintone_fieldcode_supported_list ) ) : ?>
 
 																							<?php echo $this->create_html_for_setting_cf7_mailtag( $tags, $mailtags, $app_data, $subtables, $multi_kintone_app_count ); ?>
 
-																						<?php else: ?>
-																							<?php if ( $subtables['type'] == 'FILE' ): ?>
+																						<?php else : ?>
+																							<?php if ( $subtables['type'] == 'FILE' ) : ?>
 																								<a href="<?php echo admin_url( 'admin.php?page=form-data-to-kintone-setting' ); ?>" title="">Add-Ons</a>
-																							<?php else: ?>
+																							<?php else : ?>
 																								Not Support
 																							<?php endif; ?>
 																						<?php endif; ?>
 																					</td>
 																					<td style="padding: 5px 10px; border-bottom: 1px solid #e2e2e2;">
-																						<?php if ( array_key_exists( $subtables['type'], $this->kintone_fieldcode_supported_list ) ): ?>
+																						<?php if ( array_key_exists( $subtables['type'], $this->kintone_fieldcode_supported_list ) ) : ?>
 																							<?php echo $this->create_sample_shortcode( $subtables, $app_data ); ?>
 																						<?php endif; ?>
 																					</td>
@@ -489,7 +487,7 @@ class Kintone_Form_Admin {
 
 								</table>
 
-								<?php $multi_kintone_app_count ++; ?>
+								<?php ++$multi_kintone_app_count; ?>
 
 							<?php endforeach; ?>
 
@@ -580,7 +578,6 @@ class Kintone_Form_Admin {
 		}
 
 		return $shortcode;
-
 	}
 
 	/**
@@ -620,99 +617,6 @@ class Kintone_Form_Admin {
 				}
 			}
 		}
-
-	}
-
-	/**
-	 * CF7のフォームタブにCF7のショートコードをコピペできるブタンを追加.
-	 */
-	public function kintone_form_add_tag_generator_text() {
-		$tag_generator = WPCF7_TagGenerator::get_instance();
-		$tag_generator->add(
-			'kintone',
-			__( 'kintone', 'kintone-form' ),
-			array( $this, 'kintone_form_tag_generator' )
-		);
-	}
-
-	/**
-	 * タグを生成する.
-	 *
-	 * @param WPCF7_ContactForm $contact_form .
-	 * @param string            $args .
-	 */
-	public function kintone_form_tag_generator( $contact_form, $args = '' ) {
-
-		$args = wp_parse_args( $args, array() );
-		$type = $args['id'];
-
-		if ( ! in_array( $type, array( 'email', 'url', 'tel' ), true ) ) {
-			$type = 'text';
-		}
-
-		$description          = 'Please copy & paste the code below.';
-		$properties           = $contact_form->get_properties();
-		$kintone_setting_data = $properties['kintone_setting_data'];
-
-		$insert_code = '';
-
-		if ( isset( $kintone_setting_data['app_datas'] ) ) {
-			foreach ( $kintone_setting_data['app_datas'] as $appdata ) {
-
-				if ( isset( $appdata['formdata']['properties'] ) ) {
-					foreach ( $appdata['formdata']['properties'] as $form_data ) {
-
-						if ( isset( $form_data['code'] ) ) {
-
-							$select_option = '';
-							if ( isset( $appdata['setting'][ $form_data['code'] ] ) && ! empty( $appdata['setting'][ $form_data['code'] ] ) ) {
-								$select_option = $appdata['setting'][ $form_data['code'] ];
-							}
-
-							$original_cf7tag_name = '';
-							$selectbox_readonly   = '';
-							if ( isset( $appdata['setting_original_cf7tag_name'][ $form_data['code'] ] ) && ! empty( $appdata['setting_original_cf7tag_name'][ $form_data['code'] ] ) ) {
-								$original_cf7tag_name = $appdata['setting_original_cf7tag_name'][ $form_data['code'] ];
-							}
-
-							$code = wp_strip_all_tags(
-								$this->create_sample_shortcode(
-									$form_data,
-									$appdata,
-									''
-								)
-							);
-							if ( $code ) {
-								$insert_code .= '<label> ' . $form_data['label'] . "\n    " . $code . "</label>\n\n";
-							}
-						}
-					}
-				}
-			}
-		}
-
-		?>
-		<div class="control-box">
-			<fieldset>
-				<legend><?php echo esc_html( $description ); ?></legend>
-				<textarea class="tag code" name="" id="" rows="18" style="width:100%" readonly="readonly">
-<?php echo esc_textarea( $insert_code ); ?>
-				</textarea>
-			</fieldset>
-		</div>
-
-		<div class="insert-box">
-
-			<div class="submitbox">
-				<input
-					type="button"
-					class="button button-primary kintone-form-insert-tag"
-					value="<?php echo esc_attr( __( 'Insert Tag', 'kintone-form' ) ); ?>"
-				/>
-			</div>
-
-		</div>
-		<?php
 	}
 
 	/**
@@ -757,7 +661,6 @@ class Kintone_Form_Admin {
 		);
 
 		wp_enqueue_script( 'my_loadmore' );
-
 	}
 
 	/**
@@ -810,7 +713,7 @@ class Kintone_Form_Admin {
 
 				}
 
-				$i ++;
+				++$i;
 
 			}
 			$args['kintone_setting_data']['app_datas'] = $app_datas;
@@ -909,7 +812,6 @@ class Kintone_Form_Admin {
 
 			return new WP_Error( 'Error', 'URL is required' );
 		}
-
 	}
 
 	/**
